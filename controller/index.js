@@ -1,16 +1,18 @@
 const url = require('url')
-const { add: serverAdd } = require('../service/index')
-
-function add (params) {
-  return serverAdd(params)
-}
+const { add, select } = require('../service/index')
 
 module.exports.servers = function (server) {
   server.on('request', function (request, response) {
     const urls = request.url
     const { pathname, query } = url.parse(urls, true)
     if (pathname === '/add') {
-      response.send(add(query))
+      add(query, function (data) {
+        response.end(JSON.stringify(data))
+      })
+    } else if (pathname === '/select') {
+      select(query, function (data) {
+        response.end(JSON.stringify(data))
+      })
     }
   })
 }
